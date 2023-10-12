@@ -7,13 +7,13 @@ class SellerSignUpRepo {
       String address, String password, BuildContext context) async {
     final auth = FirebaseAuth.instance;
     final CollectionReference userDetails =
-        FirebaseFirestore.instance.collection('userDetails');
+        FirebaseFirestore.instance.collection('sellerDetails');
     try {
-      final UserCredential = await auth.createUserWithEmailAndPassword(
+      final userCredential = await auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-      await userDetails.doc(UserCredential.user!.uid).set({
+      await userDetails.doc(userCredential.user!.uid).set({
         'userId': auth.currentUser!.uid,
         'userType': 'seller',
         'name': name,

@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecomm/customer/cart/view/cartPage.dart';
 import 'package:ecomm/customer/detailsScreen.dart/view/detailsScreen.dart';
-import 'package:ecomm/customer/myProducts.dart';
 import 'package:ecomm/widgets/productCard.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -50,7 +49,6 @@ class CustomerHomePage extends StatelessWidget {
                 ),
                 itemCount: productData.length,
                 itemBuilder: (context, index) {
-                  final product = MyProducts.allProducts[index];
                   return InkWell(
                     onTap: () => Navigator.push(
                       context,

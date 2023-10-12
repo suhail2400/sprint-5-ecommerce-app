@@ -7,7 +7,7 @@ class CustomerSignUpRepo {
       String address, String password, BuildContext context) async {
     final auth = FirebaseAuth.instance;
     final CollectionReference userDetails =
-        FirebaseFirestore.instance.collection('userDetails');
+        FirebaseFirestore.instance.collection('customerDetails');
     try {
       final UserCredential = await auth.createUserWithEmailAndPassword(
         email: email,

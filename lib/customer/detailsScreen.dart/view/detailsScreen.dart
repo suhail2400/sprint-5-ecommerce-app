@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ecomm/customer/myProducts.dart';
-import 'package:ecomm/models/product.dart';
+import 'package:ecomm/customer/cart/repo/cartRepo.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class DetailsScreen extends StatelessWidget {
@@ -10,6 +10,8 @@ class DetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Details'),
@@ -104,7 +106,18 @@ class DetailsScreen extends StatelessWidget {
                   ),
                 ),
                 ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    CartRepo().addToCart(
+                        userId: userId,
+                        productId: product['productId'].toString(),
+                        context: context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Item Added To Cart'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  },
                   icon: const Icon(Icons.send),
                   label: const Text('Add to Cart'),
                 ),

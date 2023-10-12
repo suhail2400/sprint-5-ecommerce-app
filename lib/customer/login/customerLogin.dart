@@ -10,8 +10,8 @@ class CustomerLogin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final CollectionReference userDetails =
-        FirebaseFirestore.instance.collection('userDetails');
+    final CollectionReference customerDetails =
+        FirebaseFirestore.instance.collection('customerDetails');
     final emailController = TextEditingController();
     final passwordController = TextEditingController();
     return SafeArea(
@@ -67,24 +67,36 @@ class CustomerLogin extends StatelessWidget {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  try {
-                    // final query =
-                    //     userDetails.where("userType", isEqualTo: "customer");
-                    // await query.get().then((value) => null);
-                    final auth = FirebaseAuth.instance;
-                    final user = await auth.signInWithEmailAndPassword(
-                      email: emailController.text,
-                      password: passwordController.text,
-                    );
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CustomerHomePage(),
+                  final customerRef = customerDetails
+                      .where('email', isEqualTo: emailController.text)
+                      .get();
+                  final result = await customerRef;
+                  if (result.docs.isNotEmpty) {
+                    try {
+                      final auth = FirebaseAuth.instance;
+                      final user = await auth.signInWithEmailAndPassword(
+                        email: emailController.text,
+                        password: passwordController.text,
+                      );
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CustomerHomePage(),
+                        ),
+                      );
+                    } on FirebaseAuthException catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          backgroundColor: Colors.red,
+                          content: Text('Invalid username or Password')));
+                    }
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        backgroundColor: Colors.red,
+                        content: Text('No Such User Exists'),
                       ),
                     );
-                  } on FirebaseAuthException catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('Invalid username and Password')));
                   }
                 },
                 child: const Text('Login'),

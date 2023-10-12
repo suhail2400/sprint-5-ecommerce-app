@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 class OrderRepo {
-  Future<String> placeOrder(final String userId, BuildContext context) async {
+  Future<String> placeOrder(
+      {required final String userId, required BuildContext context}) async {
     final uuid = Uuid();
     final oId = uuid.v4();
     final CollectionReference orderItems =
@@ -16,7 +17,7 @@ class OrderRepo {
         'status': 'pending',
         'productIds': {},
         'quantity': {},
-        'subtotals': {},
+        'subtotal': {},
       });
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context)

@@ -1,4 +1,3 @@
-import 'package:ecomm/customer/myProducts.dart';
 import 'package:ecomm/models/product.dart';
 import 'package:ecomm/seller/addProduct/addProductRepo/addProductRepo.dart';
 import 'package:flutter/material.dart';

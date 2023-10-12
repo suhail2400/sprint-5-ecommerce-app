@@ -1,16 +1,24 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecomm/customer/login/customerLogin.dart';
 import 'package:ecomm/seller/home/view/sellerHomePage.dart';
 import 'package:ecomm/seller/register/view/sellerRegisterPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class SellerLoginPage extends StatelessWidget {
+class SellerLoginPage extends StatefulWidget {
   const SellerLoginPage({super.key});
 
   @override
+  State<SellerLoginPage> createState() => _SellerLoginPageState();
+}
+
+class _SellerLoginPageState extends State<SellerLoginPage> {
+  final CollectionReference sellerDetails =
+      FirebaseFirestore.instance.collection('sellerDetails');
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  @override
   Widget build(BuildContext context) {
-    final emailController = TextEditingController();
-    final passwordController = TextEditingController();
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
@@ -64,25 +72,36 @@ class SellerLoginPage extends StatelessWidget {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  try {
-                    // final query =
-                    //     userDetails.where("userType", isEqualTo: "customer");
-                    // await query.get().then((value) => null);
-                    final auth = FirebaseAuth.instance;
-                    final user = await auth.signInWithEmailAndPassword(
-                      email: emailController.text,
-                      password: passwordController.text,
-                    );
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const SellerHomePage(),
-                      ),
-                    );
-                  } on FirebaseAuthException {
+                  final sellerRef = sellerDetails
+                      .where('email', isEqualTo: emailController.text)
+                      .get();
+                  final result = await sellerRef;
+                  print(result);
+                  if (result.docs.isNotEmpty) {
+                    try {
+                      print('Hi>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+                      final auth = FirebaseAuth.instance;
+                      final user = await auth.signInWithEmailAndPassword(
+                        email: emailController.text,
+                        password: passwordController.text,
+                      );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SellerHomePage(),
+                        ),
+                      );
+                    } on FirebaseAuthException catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          backgroundColor: Colors.red,
+                          content: Text('Invalid username or Password')));
+                    }
+                  } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Invalid username and Password')),
+                      SnackBar(
+                        backgroundColor: Colors.red,
+                        content: Text('No Such User Exists'),
+                      ),
                     );
                   }
                 },

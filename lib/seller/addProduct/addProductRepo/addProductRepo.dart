@@ -38,7 +38,7 @@ class ProductRepo {
         'image': imagePaths,
         'description': description,
         'price': price,
-        'quatity': quantity,
+        'quantity': quantity,
         'productId': pId,
         'userId': auth.currentUser!.uid,
       });
